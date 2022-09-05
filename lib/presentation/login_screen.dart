@@ -1,9 +1,18 @@
 import 'package:fireauth/presentation/home_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class LoginScreen extends StatelessWidget {
+final emailController = TextEditingController();
+final passwordController = TextEditingController();
+
+class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
 
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,6 +30,7 @@ class LoginScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               TextFormField(
+                controller: emailController,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.all(
@@ -41,6 +51,7 @@ class LoginScreen extends StatelessWidget {
                 height: 20,
               ),
               TextFormField(
+                controller: passwordController,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.all(
@@ -80,15 +91,15 @@ class LoginScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (builder) {
-                            return const HomeScreen();
-                          },
-                        ),
-                      );
-                    },
+                    onPressed: signIn,
+                    // Navigator.of(context).push(
+                    //   MaterialPageRoute(
+                    //     builder: (builder) {
+                    //       return const HomeScreen();
+                    //     },
+                    //   ),
+                    // );
+
                     child: const Text(
                       'Sign In',
                       style: TextStyle(
@@ -104,5 +115,18 @@ class LoginScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future signIn() async {
+    await FirebaseAuth.instance.signInWithEmailAndPassword(
+      email: emailController.text.trim(),
+      password: passwordController.text.trim(),
+    );
+  }
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
   }
 }
